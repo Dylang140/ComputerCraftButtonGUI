@@ -14,3 +14,6 @@ The program also saves all of the states of the buttons and outputs to a floppy 
 redstone outputs that were onbefore will come back, and all the buttons will display themselves as the correct color (i.e not inverted, like button = red but output = on)
 
 When I finish it up, I will remove all of the old commented out code and update the read me
+
+Known Bugs:
+-Bundled Output #1 (white) turns on when the program starts
