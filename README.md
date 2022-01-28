@@ -12,3 +12,5 @@ The program automatically prints each button, checks if it was clicked, executes
 
 The program also saves all of the states of the buttons and outputs to a floppy of a drive connected to the computer. This means you can restart the computer,and all the 
 redstone outputs that were onbefore will come back, and all the buttons will display themselves as the correct color (i.e not inverted, like button = red but output = on)
+
+When I finish it up, I will remove all of the old commented out code and update the read me
