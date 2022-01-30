@@ -16,6 +16,10 @@ local capA, capB = peripheral.find("capacitor_hv")
 --local capA = caps[1]
 --local capB = caps[2]
 
+--How often the screen refreshes (in seconds) (also affects save frequency and custom logic, like alarms)
+
+local refreshRate = 1
+
 --==========================--
 
 --========GUI BUILD SECTION=========--
@@ -40,10 +44,10 @@ local buttons = {
 	{11, 2, 18, 4, testRed, false, "Charge"},
 	{2, 6, 9, 8, AtoB, false, "A to B"},
 	{11, 6, 18, 8, BtoA, false, "B to A"},
-	{2, 10, 9, 12, six, false, "OUT 5"},
-	{11, 10, 18, 12, seven, false, "OUT 6"},
-	{2, 14, 9, 16, eight, false, "OUT 7"},
-	{11, 14, 18, 16, 9, false, "OUT 8"}
+	{2, 10, 9, 12, 5, false, "OUT 5"},
+	{11, 10, 18, 12, 6, false, "OUT 6"},
+	{2, 14, 9, 16, 7, false, "OUT 7"},
+	{11, 14, 18, 16, 8, false, "OUT 8"}
 }
 --Must manually update!!!
 local numButtons = 8
@@ -67,7 +71,23 @@ local labels = {
 --Must manually update!!!
 local numLabels = 2
 
+--Define ALARMS as nested tables
+--graph number, threshold percentage, over or under (1 or 0)
+local alarms = {
+	{1, 25, 0},
+	{2, 25, 0}
+}
+--Must manually update!!!
+local numAlarms = 2
+
+--===============================================
+--============END CONFIG SECTION=================
+--===============================================
+
+--Array that initializes all redstone outputs as false and stores states while the program runs
+--This table is overwritten each time the program starts if there is a file with saved data avaliable
 local outputs = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}
+
 local allColors = colors.combine(
 colors.white,
 colors.orange,
@@ -89,11 +109,11 @@ colors.black)
 term.redirect(monitor)
 monitor.setTextScale(0.5)
 
-
-
 --Misc Variables
 
 local tempNum = 0
+local alarmPhase = 0
+local activeAlarms = 0
 
 --Functions
 
@@ -121,6 +141,48 @@ function readData()
 		i = i + 1
 	end
 	io.close(f)
+end
+
+function alarmTrigger()
+	if alarmPhase == 0 then
+		speaker.playNote("bit", 3.0, 6)
+		speaker.playNote("flute", 3.0, 9)
+	elseif alarmPhase == 1 then
+		speaker.playNote("bit", 3.0, 8)
+		speaker.playNote("flute", 3.0, 10) 
+		alarmPhase = -1
+	end
+	alarmPhase = alarmPhase + 1
+end
+
+function doAlarm(n)
+	alarmTemp = alarms[n]
+	currentVal = graphs[alarmTemp[1]][6] / graphs[alarmTemp[1]][7] * 100
+	if alarmTemp[3] == 0 then
+		if currentVal < alarmTemp[2] then
+			activeAlarms = activeAlarms + 1
+		end
+	elseif alarmTemp[3] == 1 then
+		if currentVal > alarmTemp[2] then
+			activeAlarms = activeAlarms + 1
+		end
+	end
+end
+
+function printAndClearAlarms()
+	xPos, yPos = monitor.getSize()
+	monitor.setCursorPos(xPos - 12, 2)
+	if activeAlarms > 0 then
+		if alarmPhase == 0 then
+			monitor.setTextColor(colors.red)
+		else
+			monitor.setTextColor(colors.white)
+		end
+		alarmTrigger()
+	end
+	print(activeAlarms .. " Alarm(s)!")
+	monitor.setTextColor(colors.white)
+	activeAlarms = 0
 end
 
 function graphCalc(n)
@@ -170,7 +232,7 @@ function drawGraph(n)
 	for i = graph[1], graph[3] + graph[1] do
 		for j = graph[2], graph[4] + graph[2] do
 			if i < (threshold + graph[1] + 1) then
-				if threshold < (graph[3] / 3) then
+				if threshold < (graph[3] / 4) then
 					if threshold < (graph[3] / 10) then
 						monitor.setBackgroundColor(colors.red)
 					else
@@ -278,6 +340,12 @@ while true do
 		drawLabel(i)
 	end
 	
+	for i = 1, numAlarms do
+		doAlarm(i)
+	end
+	
+	printAndClearAlarms()
+	
 	--event, side, xPos, yPos = os.pullEvent("monitor_touch")
 	event = {os.pullEvent()}
 	if event[1] == "monitor_touch" then
@@ -285,17 +353,20 @@ while true do
 		for j = 1, numButtons do
 			doButton(j, event[3], event[4])
 		end
-		timeout = os.startTimer(2)
+		timeout = os.startTimer(refreshRate)
 	elseif event[1] == "timer" and event[2] == timeout then
-		timeout = os.startTimer(2)
+		timeout = os.startTimer(refreshRate)
 	end
 	
 	for i = 1, numGraphs do
 		graphCalc(i)
 	end
 	
-	--maxFill = cap.getMaxEnergyStored()
-	--stored = cap.getEnergyStored()
+	--============== Add Custom Logic Here =================
+	--Note: Getting data from a peripheral (like getting accumulator capacity) in the loop
+	--might cause the screen to blink as it refreshes. Putting it here SHOULD prevent that,
+	--since it is before the screen clears
+	
 	
 	monitor.clear()
 	saveAll()
