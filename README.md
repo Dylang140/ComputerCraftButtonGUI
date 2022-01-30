@@ -1,6 +1,17 @@
 # ComputerCraftButtonGUI
 A simple button GUI for CC Tweaked
 
+Features:
+
++ Buttons and Bar Graphs that are easy to add and move
++ Graphs automatically update based on given input (IE Accumulator, maybe others later)
++ Graphs automatically change colors based on thresholds (red < 10%, yellow < 25%, blue 25 - 100 %)
++ Buttons change colors based on output state
++ All current states are saved, so when relogging or restarting the in-game computer, the buttons and outputs reloadto how they were last
++ Refreshes display, updates all GUI components, and saves data every second (can be configured)
++ Display does not blink when it refreshes (All calculations are done and saved prior to the screen being cleared and redrawn)
++ Only one file to dowload (name file as "startup.lua" in the root directory to have it run automatically)
+
 I am working on a simple lua program to add buttons (and hopefully bar graphs and indicators) to a CC tweaked computer. This should also be compatible with ComputerCraft
 
 This is made to work with Immersive Engineering redstone wires, accumulators, and other machines. It may work with other mods with slight modification
