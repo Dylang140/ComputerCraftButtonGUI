@@ -13,6 +13,7 @@ Features:
 + Graphs automatically update based on given input (IE Accumulator, maybe others later)
 + Graphs automatically change colors based on thresholds (red < 10%, yellow < 25%, blue 25 - 100 %)
 + Buttons change colors based on output state
++ Alarms can be configured to go off when a certain value is over or under a specified threshold, these alarms display in the corner of the monitor and sound an audible alarm
 + Lines that can be used for creating live power maps, conencting indicators and graphs (a bit tedious to conigure, but looks really cool and worth the time to set up)
 + All current states are saved, so when relogging or restarting the in-game computer, the buttons and outputs reload to how they were last
 + Refreshes display, updates all GUI components, and saves data every second (can be configured)
