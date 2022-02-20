@@ -4,6 +4,8 @@ A simple button GUI for CC Tweaked
 New Image:
 ![image](https://user-images.githubusercontent.com/98580719/154836004-8e7ccf7b-fa3c-4c2b-8bcf-563152720d99.png)
 
+![image](https://user-images.githubusercontent.com/98580719/154836186-29cf616b-0a1c-46f7-b1f5-0bbdfd5060a0.png)
+
 Old Image:
 ![image](https://user-images.githubusercontent.com/98580719/151685402-05fbaa1d-e21a-4c0b-9374-2dec577ff20d.png)
 
